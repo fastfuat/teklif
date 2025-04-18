@@ -1,36 +1,90 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Gadget Trade - Cihaz Teklif Platformu
 
-## Getting Started
+Bu platform, kullanıcıların ellerindeki cihazları internet üzerinden kolayca satışa sunabileceği, teklif alabileceği çift yönlü bir altyapı sunmaktadır. Next.js, Tailwind CSS ve Supabase teknolojileri ile geliştirilmiştir.
 
-First, run the development server:
+## Özellikler
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Kullanıcı Tarafı:**
+  - Giriş gerektirmeden hızlı teklif alma
+  - Kategori, marka, model ve özellik seçme
+  - WhatsApp üzerinden otomatik teklif mesajı gönderme
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Admin Paneli:**
+  - Supabase Auth ile güvenli oturum yönetimi
+  - Kategoriler, markalar, modeller ve model özellikleri yönetimi
+  - Teklif geçmişi görüntüleme ve analiz
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Kurulum
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Ön Gereksinimler
 
-## Learn More
+- Node.js 16.x veya üzeri
+- npm veya yarn
+- Supabase hesabı
 
-To learn more about Next.js, take a look at the following resources:
+### Adımlar
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Repoyu klonlayın
+   ```bash
+   git clone <repo-url>
+   cd gadget-trade
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. Bağımlılıkları yükleyin
+   ```bash
+   npm install
+   # veya
+   yarn install
+   ```
 
-## Deploy on Vercel
+3. `.env.local` dosyasını oluşturun ve Supabase bilgilerinizi ekleyin
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=<sizin-supabase-url>
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=<sizin-supabase-anonkey>
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+4. Supabase veritabanınızda aşağıdaki tabloları oluşturun:
+   - categories (id, name, image_url, created_at)
+   - brands (id, name, category_id, image_url, created_at)
+   - models (id, name, brand_id, created_at)
+   - features (id, name, model_id, options, created_at)
+   - quotes (id, category_id, brand_id, model_id, selected_features, contact_number, created_at)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+5. Supabase Authentication ayarlarını yapın (sadece email-password auth yeterli)
+
+6. Uygulamayı başlatın
+   ```bash
+   npm run dev
+   # veya
+   yarn dev
+   ```
+
+## Kullanım
+
+### Kullanıcı Paneli
+
+- Ana sayfadan kategori seçin
+- Sırasıyla marka ve model seçin
+- Model özelliklerini belirleyin
+- "WhatsApp ile Teklif Al" butonuna tıklayın
+
+### Admin Paneli
+
+- `/admin/login` URL'i ile giriş yapın
+- Kategoriler, markalar, modeller ve özellikler ekleyip düzenleyin
+- Teklif geçmişini görüntüleyin
+
+## Teknolojiler
+
+- Next.js (App Router)
+- Tailwind CSS
+- Supabase (Auth, Database, Storage)
+- TypeScript
+
+## İletişim
+
+Proje ile ilgili sorularınız için iletişime geçebilirsiniz.
+
+## Lisans
+
+Bu proje MIT lisansı altında lisanslanmıştır.
