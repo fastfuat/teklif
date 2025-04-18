@@ -5,6 +5,13 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { createSupabaseClient } from '@/lib/supabase';
 import Link from 'next/link';
 
+interface Feature {
+  id: number;
+  name: string;
+  options: string[];
+  model_id: number;
+}
+
 interface DeviceInfo {
   category: { id: number; name: string };
   brand: { id: number; name: string };
@@ -21,7 +28,7 @@ export default function QuotePage() {
 
   const [deviceInfo, setDeviceInfo] = useState<DeviceInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [features, setFeatures] = useState<any[]>([]);
+  const [features, setFeatures] = useState<Feature[]>([]);
   const [selectedFeatures, setSelectedFeatures] = useState<Record<string, string>>({});
   const [contactNumber, setContactNumber] = useState('');
   const [step, setStep] = useState(1);
@@ -171,7 +178,7 @@ export default function QuotePage() {
       if (submitError) throw submitError;
 
       setQuoteSubmitted(true);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error submitting quote:', error);
       setError('Teklif gönderilirken bir hata oluştu. Lütfen tekrar deneyin.');
     } finally {
@@ -461,7 +468,7 @@ export default function QuotePage() {
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
                 <label htmlFor="terms" className="ml-2 block text-sm text-gray-600">
-                  Kişisel verilerimin işlenmesine ve <a href="#" className="text-blue-600 hover:underline">Aydınlatma Metni</a>'nde belirtilen koşullara onay veriyorum.
+                  Kişisel verilerimin işlenmesine ve <a href="#" className="text-blue-600 hover:underline">Aydınlatma Metni</a>&apos;nde belirtilen koşullara onay veriyorum.
                 </label>
               </div>
             </div>

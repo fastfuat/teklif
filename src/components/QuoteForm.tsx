@@ -49,7 +49,7 @@ export default function QuoteForm({ features, category, brand, model }: QuoteFor
       setSuccess(true);
       return true;
       
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error saving quote:', error);
       setError('Teklif kaydedilirken bir hata oluştu. Lütfen tekrar deneyin.');
       return false;

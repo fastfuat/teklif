@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { createSupabaseClient } from '@/lib/supabase';
 import { Brand, Category } from '@/types';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function CategoryPage() {
   const params = useParams();
@@ -40,9 +41,9 @@ export default function CategoryPage() {
 
         setCategory(categoryResult.data);
         setBrands(brandResult.data || []);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error('Error fetching data:', error);
-        setError(error.message || 'Veri yüklenirken bir hata oluştu');
+        setError(typeof error === 'object' && error !== null && 'message' in error ? (error.message as string) : 'Veri yüklenirken bir hata oluştu');
       } finally {
         setIsLoading(false);
       }
@@ -109,11 +110,14 @@ export default function CategoryPage() {
           <div className="flex items-center">
             <div className="mr-4">
               {category?.image_url ? (
-                <img 
+                <Image 
                   src={category.image_url} 
                   alt={category.name} 
+                  width={64}
+                  height={64}
                   className="h-16 w-16 object-contain"
                   onError={(e) => {
+                    // @ts-ignore - Bu satır Image bileşeninde çalışması için
                     e.currentTarget.src = "https://via.placeholder.com/100?text=Kategori";
                   }}
                 />
@@ -147,11 +151,14 @@ export default function CategoryPage() {
                   <div className="relative mb-4 w-full h-40 bg-gray-100 overflow-hidden flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-gradient-to-b from-blue-500/0 to-blue-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     {brand.image_url ? (
-                      <img 
+                      <Image 
                         src={brand.image_url} 
                         alt={brand.name} 
+                        width={128}
+                        height={128}
                         className="max-h-32 max-w-full object-contain group-hover:scale-110 transition-transform duration-300"
                         onError={(e) => {
+                          // @ts-ignore - Bu satır Image bileşeninde çalışması için
                           e.currentTarget.src = "https://via.placeholder.com/150?text=Marka";
                         }}
                       />

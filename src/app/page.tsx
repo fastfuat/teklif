@@ -82,11 +82,14 @@ export default function Home() {
                 <div className="relative mb-4 w-full h-48 bg-gray-100 overflow-hidden flex items-center justify-center">
                   <div className="absolute inset-0 bg-gradient-to-b from-blue-500/0 to-blue-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   {category.image_url ? (
-                    <img 
+                    <Image 
                       src={category.image_url} 
                       alt={category.name} 
+                      width={160}
+                      height={160}
                       className="h-40 w-40 object-contain group-hover:scale-110 transition-transform duration-300"
                       onError={(e) => {
+                        // @ts-ignore - Bu satır Image bileşeninde çalışması için
                         e.currentTarget.src = "https://via.placeholder.com/200?text=Kategori";
                       }}
                     />
