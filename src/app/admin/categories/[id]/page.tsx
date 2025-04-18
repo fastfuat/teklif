@@ -19,6 +19,7 @@ export default function EditCategory({ params }: PageProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   useEffect(() => {
     const fetchCategory = async () => {
@@ -54,7 +55,7 @@ export default function EditCategory({ params }: PageProps) {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleEditCategory = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!formData.name.trim()) {
@@ -66,11 +67,55 @@ export default function EditCategory({ params }: PageProps) {
     setError(null);
     
     try {
+      setIsSaving(true);
+
+      // Update image if a new one is selected
+      let imageUrl = formData.image_url;
+      if (selectedFile) {
+        // Delete old image if exists
+        if (imageUrl) {
+          const oldImagePath = imageUrl.replace(
+            `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/image/`,
+            ''
+          );
+          
+          const { error: deleteError } = await supabase.storage
+            .from('image')
+            .remove([oldImagePath]);
+            
+          if (deleteError) {
+            console.error('Error deleting old image:', deleteError);
+          }
+        }
+        
+        // Upload new image
+        const fileExt = selectedFile.name.split('.').pop();
+        const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
+        const filePath = `kategoriler/${fileName}`;
+        
+        const { error: uploadError } = await supabase.storage
+          .from('image')
+          .upload(filePath, selectedFile);
+          
+        if (uploadError) {
+          console.error('Error uploading image:', uploadError);
+          setIsSaving(false);
+          setError('Resim yükleme hatası.');
+          return;
+        }
+        
+        const { data } = supabase.storage
+          .from('image')
+          .getPublicUrl(filePath);
+          
+        imageUrl = data.publicUrl;
+      }
+
       const { error } = await supabase
         .from('categories')
         .update({ 
           name: formData.name,
-          image_url: formData.image_url || null
+          image_url: imageUrl || null
         })
         .eq('id', params.id);
       
@@ -127,7 +172,7 @@ export default function EditCategory({ params }: PageProps) {
         </div>
       )}
       
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleEditCategory} className="space-y-4">
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
             Kategori Adı
@@ -148,11 +193,15 @@ export default function EditCategory({ params }: PageProps) {
             Resim URL (Opsiyonel)
           </label>
           <input
-            type="text"
+            type="file"
             id="image_url"
             name="image_url"
-            value={formData.image_url}
-            onChange={handleInputChange}
+            accept="image/*"
+            onChange={(e) => {
+              if (e.target.files && e.target.files.length > 0) {
+                setSelectedFile(e.target.files[0]);
+              }
+            }}
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           />
         </div>

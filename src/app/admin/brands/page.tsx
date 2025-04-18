@@ -69,10 +69,10 @@ export default function AdminBrands() {
       if (selectedFile) {
         const fileExt = selectedFile.name.split('.').pop();
         const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
-        const filePath = `brand-images/${fileName}`;
+        const filePath = `image/markalar/${fileName}`;
         
         const { error: uploadError } = await supabase.storage
-          .from('images')
+          .from('image')
           .upload(filePath, selectedFile);
           
         if (uploadError) {
@@ -80,7 +80,7 @@ export default function AdminBrands() {
         }
         
         const { data } = supabase.storage
-          .from('images')
+          .from('image')
           .getPublicUrl(filePath);
           
         imageUrl = data.publicUrl;
@@ -139,12 +139,12 @@ export default function AdminBrands() {
       // Her model için görsel silme işlemi
       for (const model of models || []) {
         if (model.image_url) {
-          const filePathMatch = model.image_url.match(/\/storage\/v1\/object\/public\/images\/(.*)/);
+          const filePathMatch = model.image_url.match(/\/storage\/v1\/object\/public\/image\/(.*)/);
           if (filePathMatch && filePathMatch[1]) {
             const filePath = decodeURIComponent(filePathMatch[1]);
             
             const { error: storageError } = await supabase.storage
-              .from('images')
+              .from('image')
               .remove([filePath]);
             
             if (storageError) {
@@ -167,24 +167,24 @@ export default function AdminBrands() {
           let filePath;
           
           // Standart publicURL formatı
-          const standardMatch = brandData.image_url.match(/\/storage\/v1\/object\/public\/images\/(.*)/);
+          const standardMatch = brandData.image_url.match(/\/storage\/v1\/object\/public\/image\/(.*)/);
           if (standardMatch && standardMatch[1]) {
             filePath = decodeURIComponent(standardMatch[1]);
           } else {
             // Alternatif URL formatı (tam URL biçimi)
-            const fullUrlMatch = brandData.image_url.match(/https:\/\/.*\/storage\/v1\/object\/public\/images\/(.*)/);
+            const fullUrlMatch = brandData.image_url.match(/https:\/\/.*\/storage\/v1\/object\/public\/image\/(.*)/);
             if (fullUrlMatch && fullUrlMatch[1]) {
               filePath = decodeURIComponent(fullUrlMatch[1]);
             } else {
               // Doğrudan dosya yolu formatı
-              const parts = brandData.image_url.split('images/');
+              const parts = brandData.image_url.split('image/');
               if (parts.length > 1) {
                 filePath = decodeURIComponent(parts[1]);
               } else {
                 // Son çare: dosya adını al
                 const fileName = brandData.image_url.split('/').pop();
                 if (fileName) {
-                  filePath = `brand-images/${fileName}`;
+                  filePath = `image/markalar/${fileName}`;
                 }
               }
             }
@@ -193,7 +193,7 @@ export default function AdminBrands() {
           if (filePath) {
             console.log('Silinecek marka görseli:', filePath);
             const { error: storageError, data } = await supabase.storage
-              .from('images')
+              .from('image')
               .remove([filePath]);
             
             if (storageError) {
