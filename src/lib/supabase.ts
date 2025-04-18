@@ -1,15 +1,18 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+// Çevre değişkenleri veya varsayılan değerler
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder-url.supabase.co';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key';
 
 // Mevcut global istemci (geriye dönük uyumluluk için)
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Her rota için yeni bir istemci oluşturma fonksiyonu
 export function createSupabaseClient() {
-  if (!supabaseUrl || !supabaseAnonKey) {
-    console.error('NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY is missing. Please check your .env.local file.');
+  // Development veya production ortamında gerçek değerlerin kullanıldığından emin olun
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    console.warn('NEXT_PUBLIC_SUPABASE_URL veya NEXT_PUBLIC_SUPABASE_ANON_KEY çevre değişkenleri eksik. Build sırasında varsayılan değerler kullanılıyor, ancak üretim ortamında gerçek değerler gerekli.');
   }
+  
   return createClient(supabaseUrl, supabaseAnonKey);
 } 
