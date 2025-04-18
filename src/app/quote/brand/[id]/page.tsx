@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Brand, Category, Model } from '@/types';
-import { supabase } from '@/lib/supabase';
+import { createSupabaseClient } from '@/lib/supabase';
 import { notFound } from 'next/navigation';
 
 interface PageProps {
@@ -14,6 +14,7 @@ interface PageProps {
 }
 
 async function getBrand(id: string): Promise<Brand | null> {
+  const supabase = createSupabaseClient();
   const { data, error } = await supabase
     .from('brands')
     .select('*')
@@ -29,6 +30,7 @@ async function getBrand(id: string): Promise<Brand | null> {
 }
 
 async function getCategory(id: string): Promise<Category | null> {
+  const supabase = createSupabaseClient();
   const { data, error } = await supabase
     .from('categories')
     .select('*')
@@ -44,6 +46,7 @@ async function getCategory(id: string): Promise<Category | null> {
 }
 
 async function getModelsByBrand(brandId: string): Promise<Model[]> {
+  const supabase = createSupabaseClient();
   const { data, error } = await supabase
     .from('models')
     .select('*')
