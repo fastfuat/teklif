@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+import { createSupabaseClient } from '@/lib/supabase';
 
 export default function AdminLogin() {
   const [email, setEmail] = useState('');
@@ -17,22 +17,54 @@ export default function AdminLogin() {
     setIsLoading(true);
 
     try {
+      const supabase = createSupabaseClient();
+      
+      // Önce bağlantı kontrolü yap
+      try {
+        // Ping atarak bağlantı kontrolü
+        await fetch(process.env.NEXT_PUBLIC_SUPABASE_URL || '', { 
+          method: 'HEAD',
+          mode: 'no-cors',
+          cache: 'no-cache',
+          headers: { 'Content-Type': 'application/json' }
+        });
+      } catch (connectionError) {
+        setError('Supabase sunucusuna bağlanılamıyor. Lütfen internet bağlantınızı kontrol edin.');
+        setIsLoading(false);
+        return;
+      }
+
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) {
-        setError(error.message);
+        if (error.message.includes('Failed to fetch') || error.message.includes('network')) {
+          setError('Bağlantı hatası: Sunucuya erişilemedi. Lütfen internet bağlantınızı kontrol edin.');
+        } else {
+          setError(error.message);
+        }
         return;
       }
 
       // Redirect to admin dashboard on successful login
       router.push('/admin/dashboard');
       router.refresh();
-    } catch (error) {
-      setError('Giriş yapılırken bir hata oluştu. Lütfen tekrar deneyiniz.');
-      console.error(error);
+    } catch (error: unknown) {
+      let errorMessage = 'Giriş yapılırken bir hata oluştu. Lütfen tekrar deneyiniz.';
+      
+      // Hata tipini kontrol et
+      if (error instanceof Error) {
+        if (error.message.includes('Failed to fetch') || error.message.includes('network')) {
+          errorMessage = 'İnternet bağlantınızı kontrol edin veya daha sonra tekrar deneyin.';
+        } else {
+          errorMessage = `Hata: ${error.message}`;
+        }
+      }
+      
+      setError(errorMessage);
+      console.error('Login error:', error);
     } finally {
       setIsLoading(false);
     }
