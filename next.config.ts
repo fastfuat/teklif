@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
-    domains: ['wkfmslazygywqdczivzf.supabase.co'],
+    domains: ['yejwrwsuijxdayshzwvn.supabase.co'],
     unoptimized: true,
   },
   serverExternalPackages: ['bcrypt'],
