@@ -74,17 +74,33 @@ export default function EditCategory({ params }: PageProps) {
       if (selectedFile) {
         // Delete old image if exists
         if (imageUrl) {
-          const oldImagePath = imageUrl.replace(
-            `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/image/`,
-            ''
-          );
-          
-          const { error: deleteError } = await supabase.storage
-            .from('image')
-            .remove([oldImagePath]);
+          try {
+            // URL'den dosya yolunu çıkar
+            let oldFilePath;
             
-          if (deleteError) {
-            console.error('Error deleting old image:', deleteError);
+            // Standart publicURL formatı
+            const standardMatch = imageUrl.match(/\/storage\/v1\/object\/public\/image\/(.*)/);
+            if (standardMatch && standardMatch[1]) {
+              oldFilePath = decodeURIComponent(standardMatch[1]);
+            } else {
+              // Alternatif URL formatı (tam URL biçimi)
+              const fullUrlMatch = imageUrl.match(/https:\/\/.*\/storage\/v1\/object\/public\/image\/(.*)/);
+              if (fullUrlMatch && fullUrlMatch[1]) {
+                oldFilePath = decodeURIComponent(fullUrlMatch[1]);
+              }
+            }
+            
+            if (oldFilePath) {
+              const { error: deleteError } = await supabase.storage
+                .from('image')
+                .remove([oldFilePath]);
+                
+              if (deleteError) {
+                console.error('Error deleting old image:', deleteError);
+              }
+            }
+          } catch (error) {
+            console.error('Error processing old image path:', error);
           }
         }
         

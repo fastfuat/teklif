@@ -17,27 +17,25 @@ export default function AdminLogin() {
     async function checkConnection() {
       setConnectionStatus('checking');
       
-      // Supabase URL'sini kontrol et
+      // Supabase URL ve anahtar kontrolü
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      if (!supabaseUrl) {
-        setError('Supabase URL tanımlanmamış. Lütfen site yöneticisi ile iletişime geçin.');
+      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+      
+      if (!supabaseUrl || !supabaseKey) {
+        setError('Supabase yapılandırması eksik. Lütfen site yöneticisi ile iletişime geçin.');
         setConnectionStatus('error');
         return;
       }
       
       try {
-        // DNS çözümlenebilirliğini kontrol etmek için basit bir istek
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 saniye zaman aşımı
+        // Supabase bağlantısını doğrudan API çağrısı ile kontrol et
+        const supabase = createSupabaseClient();
+        const { error } = await supabase.from('categories').select('id', { count: 'exact', head: true });
         
-        await fetch(supabaseUrl, { 
-          method: 'HEAD',
-          signal: controller.signal,
-          mode: 'no-cors', // CORS hatalarını önlemek için
-          cache: 'no-cache'
-        });
+        if (error) {
+          throw error;
+        }
         
-        clearTimeout(timeoutId);
         setConnectionStatus('ok');
       } catch (err) {
         console.error('Bağlantı kontrolü sırasında hata:', err);

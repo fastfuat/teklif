@@ -151,7 +151,7 @@ export default function AdminCategories() {
         for (const model of models || []) {
           if (model.image_url) {
             try {
-              // Doğru dosya yolu çıkarımı için regex desenini düzeltme
+              // URL'den dosya yolunu çıkar
               let filePath;
               
               // Standart publicURL formatı
@@ -164,16 +164,10 @@ export default function AdminCategories() {
                 if (fullUrlMatch && fullUrlMatch[1]) {
                   filePath = decodeURIComponent(fullUrlMatch[1]);
                 } else {
-                  // Doğrudan dosya yolu formatı
-                  const parts = model.image_url.split('image/');
-                  if (parts.length > 1) {
-                    filePath = decodeURIComponent(parts[1]);
-                  } else {
-                    // Son çare: dosya adını al
-                    const fileName = model.image_url.split('/').pop();
-                    if (fileName) {
-                      filePath = `modeller/${fileName}`;
-                    }
+                  // Dosya adını al
+                  const fileName = model.image_url.split('/').pop();
+                  if (fileName) {
+                    filePath = `modeller/${fileName}`;
                   }
                 }
               }
@@ -200,7 +194,7 @@ export default function AdminCategories() {
         // Marka görselini sil
         if (brand.image_url) {
           try {
-            // Doğru dosya yolu çıkarımı için regex desenini düzeltme
+            // URL'den dosya yolunu çıkar
             let filePath;
             
             // Standart publicURL formatı
@@ -213,16 +207,10 @@ export default function AdminCategories() {
               if (fullUrlMatch && fullUrlMatch[1]) {
                 filePath = decodeURIComponent(fullUrlMatch[1]);
               } else {
-                // Doğrudan dosya yolu formatı
-                const parts = brand.image_url.split('image/');
-                if (parts.length > 1) {
-                  filePath = decodeURIComponent(parts[1]);
-                } else {
-                  // Son çare: dosya adını al
-                  const fileName = brand.image_url.split('/').pop();
-                  if (fileName) {
-                    filePath = `markalar/${fileName}`;
-                  }
+                // Dosya adını al
+                const fileName = brand.image_url.split('/').pop();
+                if (fileName) {
+                  filePath = `markalar/${fileName}`;
                 }
               }
             }
@@ -262,7 +250,6 @@ export default function AdminCategories() {
       if (categoryData?.image_url) {
         try {
           // URL'den dosya yolunu çıkar
-          // Doğru dosya yolu çıkarımı için regex desenini düzeltme
           let filePath;
           
           // Standart publicURL formatı
@@ -275,16 +262,10 @@ export default function AdminCategories() {
             if (fullUrlMatch && fullUrlMatch[1]) {
               filePath = decodeURIComponent(fullUrlMatch[1]);
             } else {
-              // Doğrudan dosya yolu formatı
-              const parts = categoryData.image_url.split('image/');
-              if (parts.length > 1) {
-                filePath = decodeURIComponent(parts[1]);
-              } else {
-                // Son çare: dosya adını al
-                const fileName = categoryData.image_url.split('/').pop();
-                if (fileName) {
-                  filePath = `image/kategoriler/${fileName}`;
-                }
+              // Dosya adını al
+              const fileName = categoryData.image_url.split('/').pop();
+              if (fileName) {
+                filePath = `kategoriler/${fileName}`;
               }
             }
           }
