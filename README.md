@@ -90,3 +90,4 @@ Proje ile ilgili sorularınız için iletişime geçebilirsiniz.
 Bu proje MIT lisansı altında lisanslanmıştır.
 # platform
 # platform
+# teklif
