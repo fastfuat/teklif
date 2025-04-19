@@ -91,3 +91,4 @@ Bu proje MIT lisansı altında lisanslanmıştır.
 # platform
 # platform
 # teklif
+# teklif
